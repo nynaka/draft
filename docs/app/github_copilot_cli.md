@@ -25,22 +25,6 @@
     copilot --version
     ```
 
-### npm を使用したインストール
-
-- 前提条件: [Node.js](https://nodejs.org/ja) 22 以降
-
-- インストール
-
-    ```powershell
-    npm install -g @github/copilot
-    ```
-
-- バージョン確認
-
-    ```powershell
-    copilot --version
-    ```
-
 ---
 
 ## macOS
@@ -108,6 +92,12 @@
 
     ```bash
     npm install -g @github/copilot
+    ```
+
+- バージョン確認
+
+    ```bash
+    copilot --version
     ```
 
 ---

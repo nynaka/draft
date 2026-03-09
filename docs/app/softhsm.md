@@ -19,15 +19,29 @@
 
     - ビルドツールのインストール
 
-        ```bash
-        sudo apt install -y build-essential autoconf libtool libssl-dev
-        ```
+        - Debian / Ubuntu
+
+            ```bash
+            sudo apt install -y \
+                build-essential autoconf libtool libssl-dev
+            ```
+
+        - RHEL / Fedora
+
+            ```bash
+            sudo dnf groupinstall -y "Development Tools"
+            sudo dnf install -y \
+                openssl-devel opensc
+            ```
 
     - ソースからビルドする
 
+        !!! note
+            SoftHSM の 2026年3月1日時点の最新版である 2.7.0 は、署名回りの処理でバグがあるらしいので、当面 2.6.1 を使用しています。
+
         ```bash
-        git clone https://github.com/softhsm/SoftHSMv2
-        cd SoftHSMv2
+        git clone -b 2.6.1 https://github.com/softhsm/SoftHSMv2 SoftHSMv2-2.6.1
+        cd SoftHSMv2-2.6.1
         ./autogen.sh
         ./configure --enable-ecc --enable-eddsa
         make && sudo make install
@@ -40,7 +54,6 @@
 | Debian 系 Linux (Debian Linux、Ubuntu Linux 他)     | /usr/lib/softhsm/libsofthsm2.so       |
 | Redhat 系 Linux (Fedora、Alma Linux、RockyLinux 他) | /usr/lib64/softhsm/libsofthsm.so      |
 | ソースからビルドした場合                            | /usr/local/lib/softhsm/libsofthsm2.so |
-|                                                     |                                       |
 
 
 ## softhsm2-util

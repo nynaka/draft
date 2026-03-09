@@ -30,7 +30,8 @@ nav:
     - PostgreSQL: server/postgresql.md
     - Samba: server/samba.md
     - SSH:
-      - 公開鍵認証: server/ssh_public_key_authentication.md
+      - 公開鍵認証: ./server/ssh_public_key_authentication.md
+      - SSHトンネル: ./server/ssh_tunnel.md
     - LAN回線速度チェック: server/lan_speed_check.md
 
   - "仮想化":
