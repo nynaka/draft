@@ -1,6 +1,10 @@
 site_name: 備忘録
 
 nav:
+  - Linux:
+    - Security:
+      - LUKS: ./linux/security/luks.md
+
   - OS:
     - BSD:
       - FreeBSD: os/bsd/freebsd14.md

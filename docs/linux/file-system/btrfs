@@ -1,0 +1,202 @@
+Btrfs（Butter FS/B-tree FS)
+===
+
+## 概要
+
+Btrfs（B-tree File System）は、Linux 向けのコピーオンライト（CoW: Copy-on-Write）型ファイルシステムです。
+スナップショット、サブボリューム、透過圧縮、RAID 対応などエンタープライズ向けの機能を備えています。
+
+主な特徴:
+
+| 機能                   | 説明                                                               |
+| ---------------------- | ------------------------------------------------------------------ |
+| コピーオンライト (CoW) | データ変更時に元ブロックを保持したまま新ブロックへ書き込む         |
+| サブボリューム         | 1 つのファイルシステム上に複数の独立したディレクトリツリーを持てる |
+| スナップショット       | CoW を利用した高速・省スペースなポイントインタイム複製             |
+| 透過圧縮               | `zlib` / `lzo` / `zstd` による透過的なオンザフライ圧縮             |
+| チェックサム           | データとメタデータに対する整合性検証                               |
+| RAID 対応              | RAID 0 / 1 / 10 / 5 / 6 をソフトウェアで実現                       |
+
+## インストール
+
+- Debian Linux / Ubuntu Linux
+
+    ```bash
+    sudo apt install -y btrfs-progs
+    ```
+
+- RHEL 系 Linux (Rocky Linux / AlmaLinux / Fedora)
+
+    ```bash
+    sudo dnf install -y btrfs-progs
+    ```
+
+## ファイルシステムの作成
+
+- ファイルシステムのフォーマット
+
+    ```bash
+    sudo mkfs.btrfs /dev/mapper/luks_sda3
+    ```
+
+- デバイスの UUID 確認
+
+    ```bash
+    sudo blkid /dev/mapper/luks_sda3
+    ```
+
+- ファイルシステムのマウント
+
+    ```bash
+    # マウントポイントの作成 (ここでは、/SDA とします)
+    sudo mkdir /SDA
+
+    # ファイルシステムのマウント
+    sudo mount -t btrfs \
+        -o defaults,noatime,nodiratime,discard,compress=lzo \
+        /dev/mapper/luks_sda3 /SDA
+    ```
+
+    主なマウントオプション:
+
+    | オプション      | 説明                                             |
+    | --------------- | ------------------------------------------------ |
+    | `noatime`       | アクセス時刻の更新を無効化（パフォーマンス向上） |
+    | `nodiratime`    | ディレクトリのアクセス時刻更新を無効化           |
+    | `discard`       | SSD の TRIM（未使用ブロック解放）を有効化        |
+    | `compress=lzo`  | lzo 圧縮を有効化（高速だが圧縮率は低め）         |
+    | `compress=zstd` | zstd 圧縮を有効化（lzo より圧縮率が高く推奨）    |
+    | `subvol=<name>` | マウントするサブボリューム名を指定               |
+
+## サブボリュームの作成
+
+    ```bash
+    # ホームディレクトリ用のサブボリューム
+    sudo btrfs subvolume create /SDA/home
+    # Samba 公開ディレクトリ用のサブボリューム
+    sudo btrfs subvolume create /SDA/samba
+    ```
+
+- サブボリュームの一覧確認
+
+    ```bash
+    sudo btrfs subvolume list /SDA
+    ```
+
+- サブボリュームの詳細情報表示
+
+    ```bash
+    sudo btrfs subvolume show /SDA/home
+    ```
+
+- サブボリュームの削除
+
+    ```bash
+    # 削除前にアンマウントが必要
+    sudo btrfs subvolume delete /SDA/samba
+    ```
+
+## /etc/fstab の書式とマウント
+
+    - /etc/fstab
+
+        ```text
+        UUID=7d9c593b-7946-4c63-b62b-2643f722bc12  /SDA         btrfs  defaults,noatime,nodiratime,discard,compress=lzo              0 0
+        UUID=7d9c593b-7946-4c63-b62b-2643f722bc12  /home        btrfs  defaults,noatime,nodiratime,discard,compress=lzo,subvol=home  0 0
+        UUID=7d9c593b-7946-4c63-b62b-2643f722bc12  /samba/sda   btrfs  defaults,noatime,nodiratime,discard,compress=lzo,subvol=samba 0 0
+        ```
+
+    - マウントポイントに関する個別作業
+
+        ```bash
+        # home ディレクトリのコピー
+        sudo rsync -av /home/* /SDA/home/
+        # Samba 公開ディレクトリ
+        sudo mkdir -p /samba/sda
+        ```
+
+    - ファイルシステムのマウント
+
+        ```bash
+        sudo systemctl daemon-reload
+        sudo mount -a
+        ```
+
+## ファイルシステムの情報確認
+
+- ファイルシステムの概要表示（デバイス一覧含む）
+
+    ```bash
+    sudo btrfs filesystem show /SDA
+    ```
+
+- ディスク使用量の確認
+
+    ```bash
+    # df ライクな表示（データ・メタデータ別）
+    sudo btrfs filesystem df /SDA
+    # 詳細な使用量とフリースペースの表示
+    sudo btrfs filesystem usage /SDA
+    ```
+
+## スナップショットの手動作成
+
+- 書き込み可能スナップショットの作成
+
+    ```bash
+    sudo btrfs subvolume snapshot /SDA/samba \
+        /SDA/samba_snapshots/snap_$(date +"%Y-%m-%d_%H-%M-%S")
+    ```
+
+- 読み取り専用スナップショットの作成（バックアップ・世代管理に推奨）
+
+    ```bash
+    sudo btrfs subvolume snapshot -r /SDA/samba \
+        /SDA/samba_snapshots/snap_$(date +"%Y-%m-%d_%H-%M-%S")
+    ```
+
+- スナップショットの一覧確認
+
+    ```bash
+    sudo btrfs subvolume list /SDA
+    ```
+
+- スナップショットの削除
+
+    ```bash
+    sudo btrfs subvolume delete /SDA/samba_snapshots/<snapshot_name>
+    ```
+
+## スナップショット作成スクリプトと定期実行
+
+- スナップショット作成スクリプトの例 (ここでは、Samba 公開ディレクトリの例)
+
+    ```bash title="snapshot_samba.sh"
+    BASE_DIR="/SDA/samba"
+    SNAPSHOT_DIR="/SDA/samba_snapshots"
+    NUM_OF_HISTORIES=150
+
+    if [ ! -d "${SNAPSHOT_DIR}" ]; then
+        mkdir -p "${SNAPSHOT_DIR}"
+    fi
+
+    # スナップショットの作成
+    sudo btrfs subvolume snapshot "${BASE_DIR}" "${SNAPSHOT_DIR}/$(date +"%Y-%m-%d_%H-%M-%S")"
+
+    # 古いスナップショットの削除
+    SNAPSHOT=($(ls "${SNAPSHOT_DIR}" | sort -r))
+    if [ ! -z "${SNAPSHOT}" ]; then
+        for ((i=${NUM_OF_HISTORIES}; i<${#SNAPSHOT[@]}; i++)); do
+            sudo btrfs subvolume delete "${SNAPSHOT_DIR}/${SNAPSHOT[$i]}"
+        done
+    else
+        echo "subdirs is empty"
+    fi
+    ```
+
+- /etc/crontab
+
+    ```text
+    5  * * * * root  bash /root/bin/snapshot_samba.sh
+    ```
+
