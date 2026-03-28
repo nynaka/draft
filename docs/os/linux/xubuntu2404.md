@@ -331,9 +331,9 @@ Xubuntu Linux 24.04
 - [UDEV Gothic](https://github.com/yuru7/udev-gothic)
 
     ```bash
-    wget https://github.com/yuru7/udev-gothic/releases/download/v2.1.0/UDEVGothic_HS_v2.1.0.zip -O /tmp/UDEVGothic_HS.zip
-    wget https://github.com/yuru7/udev-gothic/releases/download/v2.1.0/UDEVGothic_NF_v2.1.0.zip -O /tmp/UDEVGothic_NF.zip
-    wget https://github.com/yuru7/udev-gothic/releases/download/v2.1.0/UDEVGothic_v2.1.0.zip -O /tmp/UDEVGothic.zip
+    wget https://github.com/yuru7/udev-gothic/releases/download/v2.2.0/UDEVGothic_HS_v2.2.0.zip -O /tmp/UDEVGothic_HS.zip
+    wget https://github.com/yuru7/udev-gothic/releases/download/v2.2.0/UDEVGothic_NF_v2.2.0.zip -O /tmp/UDEVGothic_NF.zip
+    wget https://github.com/yuru7/udev-gothic/releases/download/v2.2.0/UDEVGothic_v2.2.0.zip -O /tmp/UDEVGothic.zip
     mkdir -p .fonts/udev_gothic
     cd .fonts/udev_gothic
     unzip /tmp/UDEVGothic_HS.zip
