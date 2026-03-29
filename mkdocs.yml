@@ -26,16 +26,12 @@ nav:
     - Docker Container Sample: os/docker_container_sample.md
 
   - Server:
-    - GitLab: server/gitlab_container.md
     - Keycloak:
       - "Keycloak Samba AD Windows SSO": ./server/keycloak/ad_sso_samba/ad_sso_samba.md
       - "Keycloak Windows Server AD Windows SSO2": ./server/keycloak/ad_sso_winsrv2/ad_sso_winsrv.md
     - OpenConnect VPN: server/openconnect.md
     - PostgreSQL: server/postgresql.md
     - Samba: server/samba.md
-    - SSH:
-      - 公開鍵認証: ./server/ssh_public_key_authentication.md
-      - SSHトンネル: ./server/ssh_tunnel.md
     - LAN回線速度チェック: server/lan_speed_check.md
 
   - "仮想化":
