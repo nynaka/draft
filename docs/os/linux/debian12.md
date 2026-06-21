@@ -103,68 +103,6 @@ Debian Linux 12
         > * sklearn だけでは `import sklearn` がエラーになる。sklearn と scikit-learn は別ものらしい。
         > * Debian 12 (というより Python 3.11 だと思う) から、 `pip3 install` コマンドを実行するとき `--break-system-packages` を付けていないとエラーになるようになった。 venv を使うことが推奨されているらしい。
 
-
-## [Docker](https://docs.docker.com/engine/install/debian/)
-
-1. 古いバージョンの削除 (インストールしていた場合)
-
-    ```bash
-    sudo apt-get remove docker docker-engine docker.io containerd runc
-    ```
-
-1. APT リポジトリの設定
-
-    * 関連ツールのインストール
-
-        ```bash
-        sudo apt-get update
-        sudo apt-get -y install \
-            ca-certificates \
-            curl \
-            gnupg \
-            lsb-release
-        ```
-
-    * GPG key のインストール
-
-        ```bash
-        sudo mkdir -p /etc/apt/keyrings
-        curl -fsSL https://download.docker.com/linux/debian/gpg | \
-            sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-        ```
-
-    * リポジトリの追加
-
-        ```bash
-        echo \
-            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
-            $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-        ```
-
-    * Docker のインストール
-
-        ```bash
-        sudo apt-get update
-        sudo apt-get install -y \
-            docker-ce docker-ce-cli \
-            containerd.io \
-            docker-compose-plugin
-        ```
-
-    * ユーザ権限の設定
-
-        ```bash
-        sudo usermod -aG docker debian
-        ```
-
-    * 自動起動設定
-
-        ```bash
-        sudo systemctl enable docker
-        sudo systemctl start docker
-        ```
-
-
 ## その他の設定
 
 * SSH 公開鍵認証設定

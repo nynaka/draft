@@ -28,7 +28,6 @@ nav:
       - "Keycloak Windows Server AD Windows SSO2": ./server/keycloak/ad_sso_winsrv2/ad_sso_winsrv.md
     - OpenConnect VPN: server/openconnect.md
     - PostgreSQL: server/postgresql.md
-    - Samba: server/samba.md
     - LAN回線速度チェック: server/lan_speed_check.md
 
   - "仮想化":
@@ -59,16 +58,12 @@ nav:
 
   - "アプリ":
     - Ansible: app/ansible.md
-    - Gemini CLI: app/gemini_cli.md
-    - GitHub Copilot CLI: app/github_copilot_cli.md
     - Ollama: app/ollama.md
     - OpenSSL:
       - 自己証明書: app/openssl_self-certification.md
     - SoftHSM: app/softhsm.md
     - SUPERCOP: app/supercop.md
     - Tripwire: app/tripwire.md
-    - vim:
-      - ctags: app/vim_ctags.md
     - Linux Tools:
       - sysstat: app/linux/sysstat.md
 
